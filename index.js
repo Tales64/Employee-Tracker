@@ -7,63 +7,41 @@ inquirer.prompt([
         name: "choice",
         message: "Choose your option",
         choices: [
-            "View all departments",
-                "View all roles",
-                "View all employees",
-                "Add a department",
-                "Add a role",
-                "Add an employee",
-                "Add a Manager",
-                "Update an employee role",
-                "View Employees by Manager",
-                "View Employees by Department",
-                "Delete Departments | Roles | Employees",
-                "View the total utilized budget of a department",
-                "Exit",
+            "View All Department",
+            "View All Role",
+            "View All Employee",
+            "Add a Department",
+            "Add a Role",
+            "Add an Employee",
+        
         ]
     }
 ])
 .then(result => {
     switch (result.choice) {
         case "View All Department":
-        getAllDept()
-        break;
-        case "View All Role":
-        getAllRole()
-        break;
-        case "Update Role":
-        updateRole()
-        break;
-        case "Add a department":
-        addDepartment();
-        break;
-        case "Add a role":
-        addRole();
-        break;
-        case "Add an employee":
-        addEmployee();
-        break;
-        case "Add a Manager":
-        addManager();
-        break;
-        case "Update an employee role":
-        updateEmployeeRole();
-        break;
-        case "View Employees by Manager":
-        viewEmployeesByManager();
-        break;
-        case "View Employees by Department":
-        viewEmployeesByDepartment();
-        break;
-        case "Delete Departments | Roles | Employees":
-        deleteDepartmentsRolesEmployees();
-        break;
-        case "View the total utilized budget of a department":
-        viewTotalUtilizedBudgetOfDepartment();
-        break;
-        case "Exit":
+            getAllDept()
+            break;
+            case "View All Role":
+            getAllRole()
+            break;
+            case "Update Role":
+            getAllEmployee()
+            break;
+            case "Update Role":
+            addDept()
+            break;
+            case "Update Role":
+            addRole()
+            break;
+            case "Update Role":
+            addEmployee()
+            break;
+            case "Update Role":
+            updateRole()
+            break;
         default:
-        exitApp();
+            exitApp();
     }
 })
 
