@@ -8,7 +8,7 @@ inquirer.prompt([
         message: "Choose your option",
         choices: [
             "View All Department",
-            "Viewn All Role",
+            "View All Role",
             "View All Employee",
         ]
     }
