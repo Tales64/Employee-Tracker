@@ -1,6 +1,8 @@
 import inquirer from'inquirer';
 import db from './config/connection.js'
 
+
+
 inquirer.prompt([
     {
         type: "list",
@@ -19,35 +21,62 @@ inquirer.prompt([
 ])
 .then(result => {
     switch (result.choice) {
-        case "View All Department":
-            getAllDept()
+        case '"View All Department"':
+            getAllDepartment()
             break;
             case "View All Role":
             getAllRole()
             break;
-            case "Update Role":
+            case "View All Employee":
             getAllEmployee()
             break;
-            case "Update Role":
-            addDept()
+            case "Add a Department":
+            addDepartment()
             break;
-            case "Update Role":
+            case "Add a Role":
             addRole()
             break;
-            case "Update Role":
+            case "Add a Employee":
             addEmployee()
             break;
             case "Update Role":
             updateRole()
             break;
-        default:
+            default:
             exitApp();
     }
 })
 
 
 
-function getAllDept() {
+function getAllDepartment() {
+    db.promise().query("SELECT * FROM department")
+    .then(result => console.log(result))
+    .catch(err => console.log(err))
+}
+function getAllRole() {
+    db.promise().query("SELECT * FROM role")
+    .then(result => console.log(result))
+    .catch(err => console.log(err))
+}
+function getAllEmployee() {
+    db.promise().query("SELECT * FROM employee")
+    .then(result => console.log(result))
+    .catch(err => console.log(err))
+}
+
+function addDepartment() {
+    db.promise().query(`INSERT INTO produce (id, name)
+    VALUES (1, "apple");`)
+    .then(result => console.log(result))
+    .catch(err => console.log(err))
+}
+function addRole() {
+    db.promise().query("SELECT * FROM department")
+    .then(result => console.log(result))
+    .catch(err => console.log(err))
+}
+function addEmployee() {
     db.promise().query("SELECT * FROM department")
     .then(result => console.log(result))
     .catch(err => console.log(err))
