@@ -29,7 +29,7 @@ VALUES
 ('Fire Marshal', 135000.00, 11),
 ('Maintenance Manager', 135000.00, 12);
 
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
+INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES
 ('Stanley', 'Ipkiss', 1, 1),
 ('Lloyd', 'Christmas', 2, 2),
