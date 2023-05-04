@@ -2,8 +2,7 @@ const express = require('express');
 const inquirer = require('inquirer');
 const mysql = require(`mysql2`);
 // const db = require('./config/connection.js');
-const cTable = require(`console.table`);
-const app = express();
+require(`console.table`);
 
 
 const PORT = process.env.PORT || 3001;
@@ -37,6 +36,7 @@ inquirer.prompt([
             "Add a Department",
             "Add a Role",
             "Add an Employee",
+            "Exit"
         
         ]
     }
@@ -58,8 +58,10 @@ inquirer.prompt([
             case "Add a Role":
             addRole()
             break;
-            case "Add a Employee":
+            case "Add an Employee":
+            console.log("dogs!");
             addEmployee()
+            console.log("cats!");
             break;
             case "Update Role":
             updateRole()
@@ -109,74 +111,75 @@ function addDepartment() {
         db.query(`INSERT INTO departments (name) VALUES (?)`, [`${data.name}`], function (err, results) {
             console.log(``);
             console.log(`New Department Added!`);
-          });
-    init()
-})
+        });
+        init()
+    })
 }
 
 
-function addRole() {
+const addRole = ()  => {
     const departmentsArr = [];
     db.query(`SELECT name FROM departments`, function (err, results) {
     for (i = 0; i < results.length; i++) {
         departmentsArr.push(results[i]['name'])
-        }
-    });
-       inquirer.prompt([
-            {
-                type: `input`,
-                name: `title`,
-                message: `What is the job title for this role?`
-            },
-            {
-                type: `input`,
-                name: `salary`,
-                message: `What is the salary for this position?`
-            },
-            {
-                type: `list`,
-                name: `department`,
-                message: `What department is this role assigned to?`,
-                choices: departmentsArr
-            }
-        ]).then((data)=>{
-            db.query(`SELECT id FROM departments WHERE name=?`,[data.department], function (err, depResults) {
-                console.log(depResults[0].id);
-                db.query(`INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)`,[`${data.title}`,`${data.salary}`,`${depResults[0].id}`], function (err, newRole) {
-                    console.log(`New Role Added!`);
-                    init();
-                });
-            });
+    }
+});
+inquirer.prompt([
+    {
+        type: `input`,
+        name: `title`,
+        message: `What is the job title for this role?`
+    },
+    {
+        type: `input`,
+        name: `salary`,
+        message: `What is the salary for this position?`
+    },
+    {
+        type: `list`,
+        name: `department`,
+        message: `What department is this role assigned to?`,
+        choices: departmentsArr
+    }
+]).then((data)=>{
+    db.query(`SELECT id FROM departments WHERE name=?`,[data.department], function (err, depResults) {
+        console.log(depResults[0].id);
+        db.query(`INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)`,[`${data.title}`,`${data.salary}`,`${depResults[0].id}`], function (err, newRole) {
+            console.log(`New Role Added!`);
+            init();
         });
+    });
+});
     }
 
-function addEmployee() {
-    const rolesArr = [];
-    db.query(`SELECT title FROM roles`, function (err, results) {
-        for (i = 0; i < results.length; i++) {
-            rolesArr.push(results[i]['title'])
-        }
-    });
-    db.query(`SELECT CONCAT (first_name," ",last_name) FROM employees AS Name`, function (err, results) {
-        const employeesArr = [];
-        console.log(results)
-        for (i = 0; i < results.length; i++) {
-            employeesArr.push(results[i][`CONCAT (first_name," ",last_name)`])
-        }
-        inquirer.prompt([
-            {
-                type: `input`,
-                name: `firstName`,
-                message: `What is this employee's first name?`
-            },
-            {
-                type: `input`,
-                name: `lastName`,
-                message: `What is this employee's last name?`
-            },
-            {
-                type: `list`,
-                name: `role`,
+    function addEmployee() {
+        const rolesArr = [];
+        db.query(`SELECT title FROM roles`, function (err, results) {
+            for (i = 0; i < results.length; i++) {
+                rolesArr.push(results[i]['title'])
+                console.log("hello")
+            }
+        });
+        db.query(`SELECT CONCAT (first_name," ",last_name) FROM employees AS Name`, function (err, results) {
+            const employeesArr = [];
+            console.log(results)
+            for (i = 0; i < results.length; i++) {
+                employeesArr.push(results[i][`CONCAT (first_name," ",last_name)`])
+            }
+            inquirer.prompt([
+                {
+                    type: `input`,
+                    name: `firstName`,
+                    message: `What is this employee's first name?`
+                },
+                {
+                    type: `input`,
+                    name: `lastName`,
+                    message: `What is this employee's last name?`
+                },
+                {
+                    type: `list`,
+                    name: `role`,
                 message: `What is this employee's job title (role)?`,
                 choices: rolesArr
             },
@@ -200,6 +203,13 @@ function addEmployee() {
                 });
             });
         });
+    })
+}
+function updateRole() {
+    db.query('SELECT * FROM departments', (err, res) => {
+        if (err) throw err
+        console.table(res)
+        init()
     })
 }
 

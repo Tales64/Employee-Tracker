@@ -1,4 +1,6 @@
-INSERT INTO departments (department_name)
+USE employee_db
+
+INSERT INTO departments (name)
 VALUES 
 ('Banking'),
 ('Transportation'),
