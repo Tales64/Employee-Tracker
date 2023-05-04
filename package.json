@@ -3,23 +3,16 @@
   "version": "1.0.0",
   "description": "SQL: Employee Tracker Homework",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Tales64/Employee-Tracker.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Tales64/Employee-Tracker/issues"
-  },
-  "homepage": "https://github.com/Tales64/Employee-Tracker#readme",
   "dependencies": {
-    "inquirer": "^9.1.5",
-    "mysql2": "^3.2.3"
+    "express": "^4.17.1",
+    "console.table": "^0.10.0",
+    "inquirer": "^8.2.5",
+    "mysql2": "^2.3.3"
   }
 }

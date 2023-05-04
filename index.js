@@ -1,8 +1,28 @@
-import inquirer from'inquirer';
-import db from './config/connection.js'
+const express = require('express');
+const inquirer = require('inquirer');
+const mysql = require(`mysql2`);
+// const db = require('./config/connection.js');
+const cTable = require(`console.table`);
+const app = express();
 
 
 const PORT = process.env.PORT || 3001;
+
+
+
+const db = mysql.createConnection(
+    {
+      host: 'localhost',
+      // MySQL username,
+      user: 'root',
+      // TODO: Add MySQL password here
+      password: 'password',
+      database: 'employee_db'
+    },
+    console.log(`Connected to the employee_db database.`)
+  );
+
+
 
 function init() {
 inquirer.prompt([
@@ -131,22 +151,56 @@ function addRole() {
     }
 
 function addEmployee() {
-    inquirer.prompt([{
-        type: 'input',
-        message: 'please enter first name of new employee',
-        first: `first_name`,
-    }
-    ,{
-        type: 'input',
-        message: 'please enter last name of new employee',
-        last: `last_name`,
-    }]).then(data => {
-        db.query(`INSERT INTO employees (first_name, last_name)
-    VALUES ("${data.first},${data.last}");`)
-    .then(result => console.log(result))
-    .catch(err => console.log(err))
-    init()
-})
+    const rolesArr = [];
+    db.query(`SELECT title FROM roles`, function (err, results) {
+        for (i = 0; i < results.length; i++) {
+            rolesArr.push(results[i]['title'])
+        }
+    });
+    db.query(`SELECT CONCAT (first_name," ",last_name) FROM employees AS Name`, function (err, results) {
+        const employeesArr = [];
+        console.log(results)
+        for (i = 0; i < results.length; i++) {
+            employeesArr.push(results[i][`CONCAT (first_name," ",last_name)`])
+        }
+        inquirer.prompt([
+            {
+                type: `input`,
+                name: `firstName`,
+                message: `What is this employee's first name?`
+            },
+            {
+                type: `input`,
+                name: `lastName`,
+                message: `What is this employee's last name?`
+            },
+            {
+                type: `list`,
+                name: `role`,
+                message: `What is this employee's job title (role)?`,
+                choices: rolesArr
+            },
+            {
+                type: `list`,
+                name: `manager`,
+                message: `Who is this employee's manager?`,
+                choices: employeesArr
+            }
+        ]).then((data)=>{
+            db.query(`SELECT id FROM roles WHERE title=?`,[data.role], function (err, roleResults) {
+                console.log(roleResults[0].id);
+                db.query(`SELECT id FROM employees WHERE CONCAT (first_name," ",last_name)=?`,[data.manager], function (err, managerResults) {
+                    console.log(managerResults[0].id);
+                    db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`, [`${data.firstName}`,`${data.lastName}`,`${roleResults[0].id}`,`${managerResults[0].id}`], function (err, results) {
+                        console.log(``);
+                        console.log(data.firstName, data.lastName, roleResults[0].id, managerResults[0].id)
+                        console.log(`New Employee Added!`);
+                        init();
+                    });
+                });
+            });
+        });
+    })
 }
 
 init()
