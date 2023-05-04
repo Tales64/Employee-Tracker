@@ -4,7 +4,7 @@ import db from './config/connection.js'
 
 const PORT = process.env.PORT || 3001;
 
-function start() {
+function init() {
 inquirer.prompt([
     {
         type: "list",
@@ -44,68 +44,91 @@ inquirer.prompt([
             case "Update Role":
             updateRole()
             break;
-            default:
+            case "Exit":
             exitApp();
+            console.log("Goodbye!");
+            break;
     }
 })
 
 
 
 function getAllDepartment() {
-    db.promise().query("SELECT * FROM departments")
-    .then(result => console.log(result))
-    .catch(err => console.log(err))
+    db.query('SELECT * FROM departments', (err, res) => {
+        if (err) throw err
+        console.table(res)
+        init()
+    })
 }
 function getAllRole() {
-    db.promise().query("SELECT * FROM roles")
-    .then(result => console.log(result))
-    .catch(err => console.log(err))
+    db.query('SELECT * FROM roles', (err, res) => {
+        if (err) throw err
+        console.table(res)
+        init()
+    })
 }
 function getAllEmployee() {
-    db.promise().query("SELECT * FROM employees")
-    .then(result => console.log(result))
-    .catch(err => console.log(err))
+    db.query('SELECT * FROM employees', (err, res) => {
+        if (err) throw err
+        console.table(res)
+        init()
+    })
 }
 }
 
 // add Inquirer Questions to these functions
 function addDepartment() {
-    inquirer.prompt([{
-        type: 'input',
-        message: 'please enter name for new department',
-        name: 'department'
-    }]).then(data => {
-        db.query(`INSERT INTO departments (name)
-    VALUES ("${data.department}");`)
-    .then(result => console.log(result))
-    .catch(err => console.log(err))
+    inquirer.prompt([
+        {
+            type: `input`,
+            name: `name`,
+            message: `What is the name of the department you would like to add?`
+        }
+    ]).then((data)=>{
+        // add to database table
+        db.query(`INSERT INTO departments (name) VALUES (?)`, [`${data.name}`], function (err, results) {
+            console.log(``);
+            console.log(`New Department Added!`);
+          });
+    init()
 })
 }
 
 
 function addRole() {
-    inquirer.prompt([{
-    type: 'input',
-    message: 'please enter name for new role',
-    name: 'role'
-
-}, {
-    type: 'input',
-    message: 'what is the salary for this role',
-    name: 'salary'
-}, {
-    type: 'list',
-    message: 'what department id is this role in',
-    name: 'department_id',
-    choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-}
-]).then(data => {
-    db.query(`INSERT INTO roles (title, salary)
-    VALUES ("${data.role},${data.salary},${data.department}");`) 
-    .then(result => console.log(result))
-    .catch(err => console.log(err))
-}
-)}
+    const departmentsArr = [];
+    db.query(`SELECT name FROM departments`, function (err, results) {
+    for (i = 0; i < results.length; i++) {
+        departmentsArr.push(results[i]['name'])
+        }
+    });
+       inquirer.prompt([
+            {
+                type: `input`,
+                name: `title`,
+                message: `What is the job title for this role?`
+            },
+            {
+                type: `input`,
+                name: `salary`,
+                message: `What is the salary for this position?`
+            },
+            {
+                type: `list`,
+                name: `department`,
+                message: `What department is this role assigned to?`,
+                choices: departmentsArr
+            }
+        ]).then((data)=>{
+            db.query(`SELECT id FROM departments WHERE name=?`,[data.department], function (err, depResults) {
+                console.log(depResults[0].id);
+                db.query(`INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)`,[`${data.title}`,`${data.salary}`,`${depResults[0].id}`], function (err, newRole) {
+                    console.log(`New Role Added!`);
+                    init();
+                });
+            });
+        });
+    }
 
 function addEmployee() {
     inquirer.prompt([{
@@ -122,10 +145,11 @@ function addEmployee() {
     VALUES ("${data.first},${data.last}");`)
     .then(result => console.log(result))
     .catch(err => console.log(err))
+    init()
 })
 }
 
-
+init()
 function exitApp() {
     return process.exit()
 }
