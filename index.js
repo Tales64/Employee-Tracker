@@ -235,16 +235,19 @@ function addEmployee() {
                         message: `Select new manager:`,
                         choices: newEmployeesArr
                     },
-                    console.log(newEmployeesArr)
+                    // console.log(newEmployeesArr)
                 ])
                 .then((data)=>{
+                    console.log("hi");
                     db.query(`SELECT id FROM roles WHERE title=?`,[data.role], function (err, roleResults) {
                         db.query(`SELECT id FROM employees WHERE ${employeeNames}=?`,[data.manager], function (err, managerResults) {
+                            db.query(`SELECT id FROM employees WHERE ${employeeNames}=?`,[data.name], function (err, employeeResults) {
                             console.log(managerResults[0].id);
-                            db.query(`UPDATE INTO employees (role_id, manager_id) VALUES (?,?)`, [`${roleResults[0].id}`,`${managerResults[0].id}`], function (err, results) {
+                            console.log(employeeResults[0].id);
+                            db.query(`UPDATE employees Set role_id = ${roleResults[0].id}, manager_id = ${managerResults[0].id} WHERE id = ${employeeResults[0].id};`, function (err, results) {
                                 console.log(``);
                                 console.log(roleResults[0].id, managerResults[0].id)
-                                console.log(`New Employee Added!`);
+                                console.log(`Employee Role Updated!`);
                                 init();
                                 });
                             });
@@ -252,12 +255,13 @@ function addEmployee() {
                     });
                 })
             });
-        };
+        });
     }
+}
     
     
         
         init()
         function exitApp() {
             return process.exit()
-        }
+        };
